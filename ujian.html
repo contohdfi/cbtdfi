@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background: #0b1120; color: #f1f5f9; min-height: 100vh; }
+    * { font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; }
+    body { background: #0b1120; color: #f1f5f9; min-height: 100vh; margin: 0; }
     .hidden { display: none !important; }
     
     .navbar-cbt {
@@ -31,7 +31,6 @@
       transform: translateY(-2px);
     }
     
-    /* Exam Engine Layout */
     .exam-header {
       background: #0f172a;
       border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -79,7 +78,6 @@
     }
     .option-item.selected .option-badge { background: #10b981; }
 
-    /* Number Grid */
     .grid-soal { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
     .btn-nomor {
       aspect-ratio: 1;
@@ -109,7 +107,7 @@
       <div class="bg-success text-white p-2 rounded-3"><i class="fas fa-graduation-cap"></i></div>
       <div>
         <h6 class="fw-bold mb-0 text-white">CBT Darul Fawaid Ilmiyah</h6>
-        <small class="text-secondary" id="nama-siswa">Nama Santri (Kelas)</small>
+        <small class="text-secondary" id="nama-siswa">Nama Siswa (Kelas)</small>
       </div>
     </div>
     <button class="btn btn-outline-danger btn-sm" onclick="logout()"><i class="fas fa-power-off"></i> Keluar</button>
@@ -151,7 +149,7 @@
   </div>
 </div>
 
-<!-- VIEW 2: CBT EXAM ENGINE -->
+<!-- VIEW 2: ENGINE UJIAN -->
 <div id="view-exam-engine" class="hidden">
   <div class="exam-header d-flex justify-content-between align-items-center">
     <div>
@@ -168,19 +166,15 @@
 
   <div class="container-fluid py-4 px-4">
     <div class="row g-4">
-      <!-- Area Soal -->
       <div class="col-lg-8">
         <div class="question-box mb-4">
           <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary">
             <span class="badge bg-dark border border-secondary px-3 py-2 fs-6" id="ex-nomor-lbl">Soal No. 1</span>
-            <span class="badge bg-info text-dark" id="ex-bobot-lbl">Bobot: 20</span>
+            <span class="badge bg-info text-dark" id="ex-bobot-lbl">Bobot: 10</span>
           </div>
 
           <p class="fs-5 text-light mb-4" id="ex-tanya">Pertanyaan soal akan muncul di sini...</p>
-
-          <div id="ex-opsi-area">
-            <!-- Render Opsi PG / Textarea Uraian -->
-          </div>
+          <div id="ex-opsi-area"></div>
         </div>
 
         <div class="d-flex justify-content-between align-items-center">
@@ -194,14 +188,11 @@
         </div>
       </div>
 
-      <!-- Area Navigasi Nomor -->
       <div class="col-lg-4">
         <div class="question-box">
           <h6 class="fw-bold text-white mb-3"><i class="fas fa-th me-2 text-info"></i> Lembar Jawaban Soal</h6>
           
-          <div class="grid-soal mb-4" id="grid-nomor">
-            <!-- Grid tombol nomor -->
-          </div>
+          <div class="grid-soal mb-4" id="grid-nomor"></div>
 
           <div class="d-flex justify-content-between small text-secondary border-top border-secondary pt-3 mb-4">
             <span><span class="badge bg-success me-1">&nbsp;</span> Selesai</span>
@@ -259,10 +250,7 @@
             <span class="badge bg-primary mb-2">${u.mapel}</span>
             <h5 class="fw-bold text-white mb-2">${u.nama}</h5>
             <p class="text-secondary small mb-3"><i class="fas fa-clock me-1"></i> Durasi: ${u.durasi} Menit</p>
-            ${u.sudah_selesai ?
-              `<button class="btn btn-secondary w-100 disabled"><i class="fas fa-check me-1"></i> Sudah Dikerjakan</button>` :
-              `<button class="btn btn-success w-100 fw-bold" onclick="bukaToken('${u.id}', '${u.nama}', ${u.durasi})"><i class="fas fa-pen-alt me-1"></i> Kerjakan Ujian</button>`
-            }
+            <button class="btn btn-success w-100 fw-bold" onclick="bukaToken('${u.id}', '${u.nama}', ${u.durasi})"><i class="fas fa-pen-alt me-1"></i> Kerjakan Ujian</button>
           </div>
         </div>
       `).join('') || '<div class="col-12 text-center text-secondary py-4">Tidak ada ujian aktif untuk kelas Anda saat ini.</div>';
@@ -290,7 +278,7 @@
   async function mulaiUjian(id, durasiMenit) {
     aId = id;
     let res = await fetchAPI('getSoal', { ujian_id: aId });
-    if (res.status === 'success' && res.data.length > 0) {
+    if (res.status === 'success' && res.data && res.data.length > 0) {
       sData = res.data;
       jData = JSON.parse(localStorage.getItem('jwb_' + aId)) || {};
       
@@ -305,7 +293,7 @@
       renderNomor();
       bukaSoal(0);
     } else {
-      alert('Belum ada butir soal yang diinput oleh guru untuk ujian ini.');
+      alert('Belum ada butir soal yang cocok untuk mata pelajaran ujian ini di Bank Soal.');
     }
   }
 
