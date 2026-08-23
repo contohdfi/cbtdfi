@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    * { font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; }
     body {
       min-height: 100vh;
       background: radial-gradient(circle at 10% 20%, rgb(15, 23, 42) 0%, rgb(30, 41, 59) 90%);
@@ -18,6 +18,7 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
+      margin: 0;
     }
     .login-container {
       width: 100%;
@@ -55,7 +56,6 @@
       color: #fff;
       box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
     }
-    .form-control::placeholder { color: #94a3b8; }
     .btn-login {
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       border: none;
@@ -71,17 +71,6 @@
       transform: translateY(-2px);
       box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
     }
-    .quick-pill {
-      font-size: 0.75rem;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #cbd5e1;
-      border-radius: 8px;
-      padding: 6px 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .quick-pill:hover { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #fff; }
   </style>
 </head>
 <body>
@@ -105,10 +94,7 @@
     </div>
 
     <div class="mb-4">
-      <div class="d-flex justify-content-between">
-        <label class="form-label text-light small fw-semibold">Password</label>
-        <span class="text-info small" role="button" onclick="togglePass()" id="lblPass"><i class="fas fa-eye"></i> Lihat</span>
-      </div>
+      <label class="form-label text-light small fw-semibold">Password</label>
       <div class="input-group">
         <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fas fa-lock"></i></span>
         <input type="password" id="password" class="form-control" placeholder="Masukkan password..." required>
@@ -121,37 +107,10 @@
       <i class="fas fa-sign-in-alt me-2"></i> MASUK KE PORTAL
     </button>
   </form>
-
-  <div class="border-top border-secondary pt-3 mt-2">
-    <p class="text-secondary small mb-2 text-center">Akun Demo Cepat (Klik untuk Mengisi):</p>
-    <div class="d-flex justify-content-center gap-2 flex-wrap">
-      <span class="quick-pill" onclick="isiAkun('admin', 'admin123')"><i class="fas fa-shield-alt text-warning me-1"></i> Admin</span>
-      <span class="quick-pill" onclick="isiAkun('guru01', 'guru123')"><i class="fas fa-chalkboard-teacher text-info me-1"></i> Guru</span>
-      <span class="quick-pill" onclick="isiAkun('siswa01', 'siswa123')"><i class="fas fa-user-graduate text-success me-1"></i> Siswa</span>
-    </div>
-  </div>
 </div>
 
 <script>
-  // URL Web App Google Apps Script Aktif
   const API_URL = 'https://script.google.com/macros/s/AKfycbxY35_7Io1cGVVwzwsEn66htauRqvrouHTFm12H8d--MkNA5vNZcVgDuuR9c2fb6X_E2g/exec';
-
-  function isiAkun(u, p) {
-    document.getElementById('username').value = u;
-    document.getElementById('password').value = p;
-  }
-
-  function togglePass() {
-    let inp = document.getElementById('password');
-    let lbl = document.getElementById('lblPass');
-    if (inp.type === 'password') {
-      inp.type = 'text';
-      lbl.innerHTML = '<i class="fas fa-eye-slash"></i> Sembunyi';
-    } else {
-      inp.type = 'password';
-      lbl.innerHTML = '<i class="fas fa-eye"></i> Lihat';
-    }
-  }
 
   async function prosesLogin(e) {
     e.preventDefault();
@@ -177,7 +136,6 @@
         localStorage.setItem('cbt_nama', res.nama);
         localStorage.setItem('cbt_kelas', res.kelas || '');
         localStorage.setItem('cbt_mapel', res.mapel || '');
-        localStorage.setItem('cbt_token', res.token || '');
 
         if (res.role === 'Admin') window.location.href = 'admin.html';
         else if (res.role === 'Guru') window.location.href = 'guru.html';
