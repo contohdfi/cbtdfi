@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin CBT - Darul Fawaid Ilmiyah</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: #0f172a; color: #f8fafc; overflow-x: hidden; }
+    .sidebar { width: 260px; min-height: 100vh; background: #1e293b; border-right: 1px solid rgba(255,255,255,0.08); position: fixed; z-index: 100; }
+    .main-content { margin-left: 260px; padding: 28px; min-height: 100vh; }
+    .nav-link-custom { display: flex; align-items: center; gap: 12px; padding: 12px 18px; color: #94a3b8; border-radius: 12px; text-decoration: none; margin-bottom: 6px; font-weight: 600; transition: all 0.2s; }
+    .nav-link-custom:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .nav-link-custom.active { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+    .stat-card { background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 22px; }
+    .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    .panel { display: none; }
+    .panel.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .table-dark-custom { background: #1e293b; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
+    .table-dark-custom th { background: #0f172a; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.08); padding: 14px 18px; }
+    .table-dark-custom td { padding: 14px 18px; color: #e2e8f0; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+    @media (max-width: 991px) { .sidebar { width: 80px; } .sidebar-text { display: none; } .main-content { margin-left: 80px; padding: 16px; } }
+  </style>
+</head>
+<body>
+
+<div class="sidebar d-flex flex-col p-3">
+  <div class="d-flex align-items-center gap-3 px-2 mb-4">
+    <div class="stat-icon bg-emerald-500 text-white bg-success" style="width:40px;height:40px;">
+      <i class="fas fa-cube fa-lg"></i>
+    </div>
+    <div class="sidebar-text">
+      <h6 class="fw-bold mb-0 text-white">CBT Admin</h6>
+      <small class="text-secondary">Darul Fawaid</small>
+    </div>
+  </div>
+
+  <div class="nav flex-column mb-auto">
+    <a href="#" class="nav-link-custom active" onclick="gantiTab('dashboard', this)"><i class="fas fa-tachometer-alt"></i> <span class="sidebar-text">Dashboard</span></a>
+    <a href="#" class="nav-link-custom" onclick="gantiTab('guru', this)"><i class="fas fa-chalkboard-teacher"></i> <span class="sidebar-text">Data Guru</span></a>
+    <a href="#" class="nav-link-custom" onclick="gantiTab('peserta', this)"><i class="fas fa-user-graduate"></i> <span class="sidebar-text">Data Siswa</span></a>
+    <a href="#" class="nav-link-custom" onclick="gantiTab('ujian', this)"><i class="fas fa-calendar-alt"></i> <span class="sidebar-text">Jadwal Ujian</span></a>
+  </div>
+
+  <div class="pt-3 border-top border-secondary">
+    <a href="#" class="nav-link-custom text-danger" onclick="logout()"><i class="fas fa-power-off"></i> <span class="sidebar-text">Keluar</span></a>
+  </div>
+</div>
+
+<div class="main-content">
+  <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary">
+    <div>
+      <h4 class="fw-bold text-white mb-0" id="page-title">Dashboard Utama</h4>
+      <small class="text-secondary">Selamat datang, <span id="nama-admin" class="text-success fw-semibold">Admin</span></small>
+    </div>
+    <button class="btn btn-outline-success btn-sm" onclick="loadDataAdmin()"><i class="fas fa-sync-alt me-1"></i> Sinkron Spreadsheet</button>
+  </div>
+
+  <!-- PANEL DASHBOARD -->
+  <div id="panel-dashboard" class="panel active">
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="stat-card d-flex align-items-center gap-3">
+          <div class="stat-icon bg-primary text-white"><i class="fas fa-users fa-lg"></i></div>
+          <div><h3 class="fw-bold mb-0 text-white" id="st-peserta">0</h3><small class="text-secondary">Total Siswa Terdaftar</small></div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card d-flex align-items-center gap-3">
+          <div class="stat-icon bg-info text-dark"><i class="fas fa-chalkboard-teacher fa-lg"></i></div>
+          <div><h3 class="fw-bold mb-0 text-white" id="st-guru">0</h3><small class="text-secondary">Total Pengajar</small></div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card d-flex align-items-center gap-3">
+          <div class="stat-icon bg-warning text-dark"><i class="fas fa-file-alt fa-lg"></i></div>
+          <div><h3 class="fw-bold mb-0 text-white" id="st-ujian">0</h3><small class="text-secondary">Sesi Ujian Aktif</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <h5 class="fw-bold text-white mb-3"><i class="fas fa-history text-info me-2"></i> Log Aktivitas Realtime</h5>
+      <ul class="list-group list-group-flush" id="list-log">
+        <li class="list-group-item bg-transparent text-secondary">Memuat log aktivitas...</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PANEL GURU -->
+  <div id="panel-guru" class="panel">
+    <div class="d-flex justify-content-between mb-3">
+      <h5 class="fw-bold text-white mb-0">Daftar Guru Pengampu</h5>
+      <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalGuru"><i class="fas fa-plus me-1"></i> Tambah Guru</button>
+    </div>
+    <div class="table-dark-custom table-responsive">
+      <table class="table table-dark mb-0">
+        <thead><tr><th>UID</th><th>NIP</th><th>Nama Lengkap</th><th>Mata Pelajaran</th></tr></thead>
+        <tbody id="tb-guru"><tr><td colspan="4" class="text-center text-secondary py-4">Memuat data guru...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PANEL PESERTA -->
+  <div id="panel-peserta" class="panel">
+    <div class="d-flex justify-content-between mb-3">
+      <h5 class="fw-bold text-white mb-0">Daftar Peserta / Siswa</h5>
+      <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalPeserta"><i class="fas fa-plus me-1"></i> Tambah Siswa</button>
+    </div>
+    <div class="table-dark-custom table-responsive">
+      <table class="table table-dark mb-0">
+        <thead><tr><th>UID</th><th>NIS</th><th>Nama Siswa</th><th>Kelas</th></tr></thead>
+        <tbody id="tb-peserta"><tr><td colspan="4" class="text-center text-secondary py-4">Memuat data peserta...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PANEL UJIAN -->
+  <div id="panel-ujian" class="panel">
+    <div class="d-flex justify-content-between mb-3">
+      <h5 class="fw-bold text-white mb-0">Jadwal & Token Ujian</h5>
+      <button class="btn btn-warning btn-sm fw-bold text-dark" onclick="buatToken()"><i class="fas fa-key me-1"></i> Buat Token Baru</button>
+    </div>
+    <div id="form-ujian" class="stat-card mb-4" style="display:none;">
+      <h6 class="fw-bold text-white mb-3">Form Pembuatan Ujian Baru</h6>
+      <div class="row g-3">
+        <div class="col-md-3"><input type="text" id="u-mapel" class="form-control" placeholder="Mata Pelajaran (Fiqih)"></div>
+        <div class="col-md-3"><input type="text" id="u-kelas" class="form-control" placeholder="Target Kelas (VII-A)"></div>
+        <div class="col-md-2"><input type="number" id="u-durasi" class="form-control" placeholder="Durasi (60 Menit)" value="60"></div>
+        <div class="col-md-2"><input type="text" id="u-token" class="form-control text-warning font-monospace fw-bold" placeholder="TOKEN"></div>
+        <div class="col-md-2"><button class="btn btn-success w-100" onclick="simpanUjian()"><i class="fas fa-save me-1"></i> Rilis Ujian</button></div>
+      </div>
+    </div>
+    <div class="table-dark-custom table-responsive">
+      <table class="table table-dark mb-0">
+        <thead><tr><th>ID Ujian</th><th>Mata Pelajaran</th><th>Kelas</th><th>Durasi</th><th>Token Aktif</th><th>Status</th></tr></thead>
+        <tbody id="tb-ujian"><tr><td colspan="6" class="text-center text-secondary py-4">Memuat jadwal ujian...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Guru -->
+<div class="modal fade" id="modalGuru" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content bg-slate-900 text-white" style="background:#1e293b;">
+    <div class="modal-header border-secondary"><h5 class="modal-title">Tambah Guru Baru</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body row g-3">
+      <div class="col-6"><label class="small text-secondary">User ID</label><input type="text" id="g-uid" class="form-control" placeholder="G02"></div>
+      <div class="col-6"><label class="small text-secondary">NIP</label><input type="text" id="g-nip" class="form-control" placeholder="NIP Guru"></div>
+      <div class="col-12"><label class="small text-secondary">Nama Lengkap & Gelar</label><input type="text" id="g-nama" class="form-control" placeholder="Ust. Fulan M.Pd"></div>
+      <div class="col-6"><label class="small text-secondary">Username Login</label><input type="text" id="g-user" class="form-control" placeholder="guru_fiqih"></div>
+      <div class="col-6"><label class="small text-secondary">Password</label><input type="password" id="g-pass" class="form-control" placeholder="••••••••"></div>
+      <div class="col-12"><label class="small text-secondary">Mata Pelajaran yang Diampu</label><input type="text" id="g-mapel" class="form-control" placeholder="Fiqih / Bahasa Arab"></div>
+    </div>
+    <div class="modal-footer border-secondary"><button class="btn btn-success w-100" onclick="simpanGuru()">Simpan Data Guru</button></div>
+  </div></div>
+</div>
+
+<!-- Modal Peserta -->
+<div class="modal fade" id="modalPeserta" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content bg-slate-900 text-white" style="background:#1e293b;">
+    <div class="modal-header border-secondary"><h5 class="modal-title">Tambah Siswa Baru</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body row g-3">
+      <div class="col-6"><label class="small text-secondary">User ID</label><input type="text" id="p-uid" class="form-control" placeholder="S02"></div>
+      <div class="col-6"><label class="small text-secondary">NIS</label><input type="text" id="p-nis" class="form-control" placeholder="2024002"></div>
+      <div class="col-12"><label class="small text-secondary">Nama Lengkap Siswa</label><input type="text" id="p-nama" class="form-control" placeholder="Nama Santri"></div>
+      <div class="col-6"><label class="small text-secondary">Username Login</label><input type="text" id="p-user" class="form-control" placeholder="santri_01"></div>
+      <div class="col-6"><label class="small text-secondary">Password</label><input type="password" id="p-pass" class="form-control" placeholder="••••••••"></div>
+      <div class="col-12"><label class="small text-secondary">Kelas</label><input type="text" id="p-kelas" class="form-control" placeholder="VII-A"></div>
+    </div>
+    <div class="modal-footer border-secondary"><button class="btn btn-success w-100" onclick="simpanPeserta()">Simpan Data Siswa</button></div>
+  </div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const API_URL = 'https://script.google.com/macros/s/AKfycbxY35_7Io1cGVVwzwsEn66htauRqvrouHTFm12H8d--MkNA5vNZcVgDuuR9c2fb6X_E2g/exec';
+
+  async function fetchAPI(action, payload = {}) {
+    payload.action = action;
+    payload.user_id = localStorage.getItem('cbt_user_id') || 'ADMIN';
+    return fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).then(r => r.json());
+  }
+
+  window.onload = () => {
+    if (localStorage.getItem('cbt_role') !== 'Admin') {
+      window.location.href = 'index.html';
+      return;
+    }
+    document.getElementById('nama-admin').innerText = localStorage.getItem('cbt_nama') || 'Administrator';
+    loadDataAdmin();
+  };
+
+  function gantiTab(id, el) {
+    document.querySelectorAll('.nav-link-custom').forEach(a => a.classList.remove('active'));
+    if (el) el.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    let titles = { 'dashboard': 'Dashboard Utama', 'guru': 'Data Master Guru', 'peserta': 'Data Master Peserta', 'ujian': 'Manajemen Jadwal Ujian' };
+    document.getElementById('page-title').innerText = titles[id];
+  }
+
+  async function loadDataAdmin() {
+    let res = await fetchAPI('getAdminData');
+    if (res.status === 'success') {
+      document.getElementById('st-peserta').innerText = res.data.stats.p;
+      document.getElementById('st-guru').innerText = res.data.stats.g;
+      document.getElementById('st-ujian').innerText = res.data.stats.u;
+
+      document.getElementById('tb-peserta').innerHTML = res.data.peserta.map(p =>
+        `<tr><td><span class="badge bg-secondary">${p.uid}</span></td><td>${p.nis}</td><td><b>${p.nama || '-'}</b></td><td><span class="badge bg-primary">${p.kelas}</span></td></tr>`
+      ).join('') || '<tr><td colspan="4" class="text-center text-secondary">Belum ada data siswa</td></tr>';
+
+      document.getElementById('tb-guru').innerHTML = res.data.guru.map(g =>
+        `<tr><td><span class="badge bg-secondary">${g.uid}</span></td><td>${g.nip}</td><td><b>${g.nama || '-'}</b></td><td><span class="badge bg-info text-dark">${g.mapel}</span></td></tr>`
+      ).join('') || '<tr><td colspan="4" class="text-center text-secondary">Belum ada data guru</td></tr>';
+
+      document.getElementById('tb-ujian').innerHTML = res.data.ujian.map(u =>
+        `<tr><td><b>${u.id}</b></td><td>${u.mapel}</td><td><span class="badge bg-dark">${u.kelas}</span></td><td>${u.durasi} Menit</td><td><span class="badge bg-warning text-dark font-monospace fs-6 px-3 py-1">${u.token}</span></td><td><span class="badge bg-success">${u.status}</span></td></tr>`
+      ).join('') || '<tr><td colspan="6" class="text-center text-secondary">Belum ada jadwal ujian</td></tr>';
+
+      document.getElementById('list-log').innerHTML = res.data.log.map(l =>
+        `<li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center border-secondary py-2">
+          <span><i class="fas fa-angle-right text-success me-2"></i><b class="text-info">[${l.uid}]</b> ${l.akt}</span>
+          <span class="text-secondary small">${l.waktu}</span>
+        </li>`
+      ).join('') || '<li class="list-group-item bg-transparent text-secondary">Belum ada log tercatat.</li>';
+    }
+  }
+
+  function buatToken() {
+    document.getElementById('form-ujian').style.display = 'block';
+    document.getElementById('u-token').value = Math.random().toString(36).substr(2, 5).toUpperCase();
+  }
+
+  async function simpanUjian() {
+    let p = {
+      mapel: document.getElementById('u-mapel').value,
+      kelas: document.getElementById('u-kelas').value,
+      durasi: document.getElementById('u-durasi').value,
+      token: document.getElementById('u-token').value
+    };
+    let res = await fetchAPI('tambahUjianBaru', p);
+    if (res.status === 'success') {
+      alert('Jadwal ujian berhasil dirilis!');
+      document.getElementById('form-ujian').style.display = 'none';
+      loadDataAdmin();
+    }
+  }
+
+  async function simpanGuru() {
+    let p = {
+      uid: document.getElementById('g-uid').value,
+      nip: document.getElementById('g-nip').value,
+      nama: document.getElementById('g-nama').value,
+      username: document.getElementById('g-user').value,
+      password: document.getElementById('g-pass').value,
+      mapel: document.getElementById('g-mapel').value,
+      guru_id: 'G-' + Math.floor(100 + Math.random() * 900)
+    };
+    let res = await fetchAPI('tambahGuru', p);
+    if (res.status === 'success') {
+      bootstrap.Modal.getInstance(document.getElementById('modalGuru')).hide();
+      loadDataAdmin();
+    }
+  }
+
+  async function simpanPeserta() {
+    let p = {
+      uid: document.getElementById('p-uid').value,
+      nis: document.getElementById('p-nis').value,
+      nama: document.getElementById('p-nama').value,
+      username: document.getElementById('p-user').value,
+      password: document.getElementById('p-pass').value,
+      kelas: document.getElementById('p-kelas').value,
+      peserta_id: 'P-' + Math.floor(100 + Math.random() * 900)
+    };
+    let res = await fetchAPI('tambahPeserta', p);
+    if (res.status === 'success') {
+      bootstrap.Modal.getInstance(document.getElementById('modalPeserta')).hide();
+      loadDataAdmin();
+    }
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = 'index.html';
+  }
+</script>
+</body>
+</html>
