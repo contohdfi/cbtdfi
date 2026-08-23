@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background: #0f172a; color: #f8fafc; }
+    * { font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; }
+    body { background: #0f172a; color: #f8fafc; margin: 0; min-height: 100vh; }
     .navbar-guru { background: #1e293b; border-bottom: 1px solid rgba(255,255,255,0.08); padding: 14px 24px; }
     .card-custom { background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 22px; }
     .nav-tabs-custom { border-bottom: 1px solid rgba(255,255,255,0.1); }
@@ -29,7 +29,7 @@
     <div class="bg-success text-white p-2 rounded-3"><i class="fas fa-chalkboard-teacher fa-lg"></i></div>
     <div>
       <h5 class="fw-bold mb-0 text-white">Panel Guru Pengampu</h5>
-      <small class="text-secondary" id="nama-guru">Ustadz Pengampu</small>
+      <small class="text-secondary" id="nama-guru">Guru Pengampu</small>
     </div>
   </div>
   <div class="d-flex gap-2">
@@ -68,13 +68,13 @@
   <!-- Panel Bank Soal -->
   <div id="panel-bank-soal" class="panel active">
     <div class="d-flex justify-content-between mb-3">
-      <h5 class="fw-bold text-white mb-0">Daftar Bank Soal</h5>
-      <button class="btn btn-success btn-sm" onclick="bukaModalSoal()"><i class="fas fa-plus me-1"></i> Tambah Butir Soal</button>
+      <h5 class="fw-bold text-white mb-0">Daftar Bank Soal Guru</h5>
+      <button class="btn btn-success btn-sm fw-bold" onclick="bukaModalSoal()"><i class="fas fa-plus me-1"></i> Tambah Butir Soal Baru</button>
     </div>
     <div class="card-custom p-0 overflow-hidden">
       <table class="table table-dark mb-0">
-        <thead><tr><th>ID</th><th>Mapel</th><th>Tipe</th><th>Pertanyaan</th><th>Bobot</th></tr></thead>
-        <tbody id="tb-soal"><tr><td colspan="5" class="text-center text-secondary py-4">Memuat bank soal...</td></tr></tbody>
+        <thead><tr><th>ID</th><th>Mapel</th><th>Target Kelas</th><th>Tipe</th><th>Pertanyaan</th><th>Bobot</th></tr></thead>
+        <tbody id="tb-soal"><tr><td colspan="6" class="text-center text-secondary py-4">Memuat bank soal...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -96,30 +96,34 @@
   <div class="modal-dialog modal-lg"><div class="modal-content" style="background:#1e293b; color:#fff;">
     <div class="modal-header border-secondary"><h5 class="modal-title">Buat Soal Baru</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
     <div class="modal-body row g-3">
-      <div class="col-md-4"><label class="small text-secondary">ID Soal</label><input type="text" id="ts-id" class="form-control"></div>
-      <div class="col-md-4"><label class="small text-secondary">Tipe Soal</label>
+      <div class="col-md-3"><label class="small text-secondary">ID Soal</label><input type="text" id="ts-id" class="form-control" readonly></div>
+      <div class="col-md-3"><label class="small text-secondary">Mata Pelajaran</label><input type="text" id="ts-mapel" class="form-control fw-bold text-info"></div>
+      <div class="col-md-3"><label class="small text-secondary">Target Tingkat / Kelas</label>
+        <input type="text" id="ts-kelas" class="form-control text-warning fw-bold" placeholder="cth: VII, VIII, IX, atau VII-A">
+      </div>
+      <div class="col-md-3"><label class="small text-secondary">Tipe Soal</label>
         <select id="ts-tipe" class="form-select" onchange="toggleTipeSoal()">
           <option value="PG">Pilihan Ganda (PG)</option>
           <option value="Uraian">Uraian / Esai</option>
-          <option value="Isian">Isian Singkat</option>
         </select>
       </div>
-      <div class="col-md-4"><label class="small text-secondary">Bobot Nilai</label><input type="number" id="ts-bobot" class="form-control" value="20"></div>
+
       <div class="col-md-12"><label class="small text-secondary">Isi Pertanyaan Soal</label><textarea id="ts-tanya" class="form-control" rows="3" placeholder="Tuliskan butir soal di sini..."></textarea></div>
 
       <div id="area-pg" class="col-12">
-        <label class="small text-secondary mb-2">Pilihan Opsi Jawaban (Khusus Pilihan Ganda)</label>
+        <label class="small text-secondary mb-2">Pilihan Opsi Jawaban (Khusus PG)</label>
         <div class="row g-2">
           <div class="col-md-6"><div class="input-group"><span class="input-group-text bg-dark text-white border-secondary">A</span><input type="text" id="ts-a" class="form-control" placeholder="Pilihan A"></div></div>
           <div class="col-md-6"><div class="input-group"><span class="input-group-text bg-dark text-white border-secondary">B</span><input type="text" id="ts-b" class="form-control" placeholder="Pilihan B"></div></div>
           <div class="col-md-6"><div class="input-group"><span class="input-group-text bg-dark text-white border-secondary">C</span><input type="text" id="ts-c" class="form-control" placeholder="Pilihan C"></div></div>
           <div class="col-md-6"><div class="input-group"><span class="input-group-text bg-dark text-white border-secondary">D</span><input type="text" id="ts-d" class="form-control" placeholder="Pilihan D"></div></div>
-          <div class="col-md-12 mt-3"><label class="small text-secondary">Kunci Jawaban Benar</label><input type="text" id="ts-kunci" class="form-control text-warning fw-bold" placeholder="A / B / C / D"></div>
+          <div class="col-md-6 mt-3"><label class="small text-secondary">Kunci Jawaban Benar</label><input type="text" id="ts-kunci" class="form-control text-warning fw-bold text-center" placeholder="A / B / C / D"></div>
+          <div class="col-md-6 mt-3"><label class="small text-secondary">Bobot Nilai</label><input type="number" id="ts-bobot" class="form-control" value="10"></div>
         </div>
       </div>
     </div>
     <div class="modal-footer border-secondary">
-      <button type="button" class="btn btn-primary w-100" id="btn-simpan-soal" onclick="simpanSoalBaru()">Simpan ke Bank Soal</button>
+      <button type="button" class="btn btn-success w-100 fw-bold" id="btn-simpan-soal" onclick="simpanSoalBaru()">Simpan ke Bank Soal</button>
     </div>
   </div></div>
 </div>
@@ -132,6 +136,7 @@
   async function fetchAPI(action, payload = {}) {
     payload.action = action;
     payload.user_id = localStorage.getItem('cbt_user_id');
+    payload.guru_id = localStorage.getItem('cbt_guru_id') || localStorage.getItem('cbt_user_id');
     payload.mapel = localStorage.getItem('cbt_mapel');
     return fetch(API_URL, {
       method: 'POST',
@@ -165,23 +170,32 @@
       document.getElementById('st-koreksi').innerText = res.data.stats.n;
 
       document.getElementById('tb-soal').innerHTML = res.data.soal.map(s =>
-        `<tr><td><b>${s.id}</b></td><td><span class="badge bg-secondary">${s.mapel}</span></td><td><span class="badge bg-primary">${s.tipe}</span></td><td>${s.tanya}</td><td>${s.bobot}</td></tr>`
-      ).join('') || '<tr><td colspan="5" class="text-center text-secondary">Belum ada soal dibuat</td></tr>';
+        `<tr>
+          <td><b>${s.id}</b></td>
+          <td><span class="badge bg-secondary">${s.mapel}</span></td>
+          <td><span class="badge bg-dark border border-secondary text-warning">${s.kelas || 'Semua'}</span></td>
+          <td><span class="badge bg-primary">${s.tipe}</span></td>
+          <td>${s.tanya}</td>
+          <td>${s.bobot}</td>
+        </tr>`
+      ).join('') || '<tr><td colspan="6" class="text-center text-secondary py-4">Belum ada soal dibuat</td></tr>';
 
       document.getElementById('tb-koreksi').innerHTML = res.data.nilai.map(n =>
         `<tr id="baris-${n.row}">
-          <td><b class="text-info">${n.nama_siswa || n.u_id}</b><br><small class="text-secondary">${n.u_id}</small></td>
+          <td><b class="text-info">${n.u_id}</b></td>
           <td>${n.s_id}</td>
           <td>${n.jwb}</td>
           <td><input type="number" id="nilai-${n.row}" class="form-control form-control-sm text-center fw-bold text-success" placeholder="0-100"></td>
           <td><button class="btn btn-sm btn-success" onclick="simpanKoreksi(${n.row})"><i class="fas fa-check"></i></button></td>
         </tr>`
-      ).join('') || '<tr><td colspan="5" class="text-center text-secondary">Semua jawaban siswa telah dinilai</td></tr>';
+      ).join('') || '<tr><td colspan="5" class="text-center text-secondary py-4">Semua jawaban siswa telah dinilai</td></tr>';
     }
   }
 
   function bukaModalSoal() {
     document.getElementById('ts-id').value = 'S' + Math.floor(100 + Math.random() * 900);
+    document.getElementById('ts-mapel').value = localStorage.getItem('cbt_mapel') || 'Penjaskes';
+    document.getElementById('ts-kelas').value = 'VIII';
     modalSoalObj.show();
   }
 
@@ -193,6 +207,8 @@
   async function simpanSoalBaru() {
     let p = {
       id_soal: document.getElementById('ts-id').value,
+      mapel: document.getElementById('ts-mapel').value,
+      kelas: document.getElementById('ts-kelas').value || 'Semua',
       tipe: document.getElementById('ts-tipe').value,
       bobot: document.getElementById('ts-bobot').value,
       tanya: document.getElementById('ts-tanya').value,
@@ -215,7 +231,7 @@
     let res = await fetchAPI('simpanNilai', { row_index: rowIndex, nilai: nilai });
     if (res.status === 'success') {
       document.getElementById('baris-' + rowIndex).classList.add('table-success');
-      setTimeout(() => document.getElementById('baris-' + rowIndex).remove(), 1200);
+      setTimeout(() => document.getElementById('baris-' + rowIndex).remove(), 1000);
     }
   }
 
