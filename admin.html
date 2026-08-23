@@ -13,7 +13,6 @@
     * { font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; }
     body { background: #0b1120; color: #f1f5f9; min-height: 100vh; margin: 0; display: flex; }
     
-    /* SIDEBAR MODERN */
     #sidebar {
       width: 260px;
       background: #111827;
@@ -84,7 +83,6 @@
     }
     .nav-link-custom i { width: 20px; font-size: 1rem; text-align: center; }
 
-    /* CONTENT AREA */
     #content {
       margin-left: 260px;
       width: calc(100% - 260px);
@@ -157,15 +155,6 @@
       border-color: #10b981;
       color: #fff;
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-    }
-
-    @media (max-width: 991px) {
-      #sidebar { width: 72px; }
-      .sidebar-text, .nav-header { display: none; }
-      .sidebar-brand { justify-content: center; padding: 16px 0; }
-      .nav-link-custom { justify-content: center; padding: 12px; }
-      .nav-link-custom i { margin: 0; }
-      #content { margin-left: 72px; width: calc(100% - 72px); padding: 16px; }
     }
   </style>
 </head>
@@ -316,11 +305,11 @@
       <div class="row g-3">
         <div class="col-md-3">
           <label class="form-label small text-secondary">Mata Pelajaran</label>
-          <input type="text" id="u-mapel" class="form-control" placeholder="cth: Fiqih">
+          <input type="text" id="u-mapel" class="form-control" placeholder="cth: Penjaskes">
         </div>
         <div class="col-md-3">
           <label class="form-label small text-secondary">Target Kelas</label>
-          <input type="text" id="u-kelas" class="form-control" placeholder="cth: VII-A">
+          <input type="text" id="u-kelas" class="form-control" placeholder="cth: VIII-A">
         </div>
         <div class="col-md-2">
           <label class="form-label small text-secondary">Durasi (Menit)</label>
@@ -355,9 +344,9 @@
       <div class="col-6"><label class="small text-secondary">User ID</label><input type="text" id="g-uid" class="form-control" placeholder="G02"></div>
       <div class="col-6"><label class="small text-secondary">NIP</label><input type="text" id="g-nip" class="form-control" placeholder="NIP Guru"></div>
       <div class="col-12"><label class="small text-secondary">Nama Lengkap & Gelar</label><input type="text" id="g-nama" class="form-control" placeholder="Ust. Fulan M.Pd"></div>
-      <div class="col-6"><label class="small text-secondary">Username Login</label><input type="text" id="g-user" class="form-control" placeholder="guru_fiqih"></div>
+      <div class="col-6"><label class="small text-secondary">Username Login</label><input type="text" id="g-user" class="form-control" placeholder="guru_penjas"></div>
       <div class="col-6"><label class="small text-secondary">Password</label><input type="password" id="g-pass" class="form-control" placeholder="••••••••"></div>
-      <div class="col-12"><label class="small text-secondary">Mata Pelajaran yang Diampu</label><input type="text" id="g-mapel" class="form-control" placeholder="Fiqih / Bahasa Arab"></div>
+      <div class="col-12"><label class="small text-secondary">Mata Pelajaran yang Diampu</label><input type="text" id="g-mapel" class="form-control" placeholder="Penjaskes"></div>
     </div>
     <div class="modal-footer border-secondary"><button class="btn btn-success w-100 fw-bold" onclick="simpanGuru()">Simpan Data Guru</button></div>
   </div></div>
@@ -370,10 +359,10 @@
     <div class="modal-body row g-3">
       <div class="col-6"><label class="small text-secondary">User ID</label><input type="text" id="p-uid" class="form-control" placeholder="S02"></div>
       <div class="col-6"><label class="small text-secondary">NIS</label><input type="text" id="p-nis" class="form-control" placeholder="2024002"></div>
-      <div class="col-12"><label class="small text-secondary">Nama Lengkap Siswa</label><input type="text" id="p-nama" class="form-control" placeholder="Nama Santri"></div>
-      <div class="col-6"><label class="small text-secondary">Username Login</label><input type="text" id="p-user" class="form-control" placeholder="santri_01"></div>
+      <div class="col-12"><label class="small text-secondary">Nama Lengkap Siswa</label><input type="text" id="p-nama" class="form-control" placeholder="Fadol Ilahi"></div>
+      <div class="col-6"><label class="small text-secondary">Username Login</label><input type="text" id="p-user" class="form-control" placeholder="fadol_01"></div>
       <div class="col-6"><label class="small text-secondary">Password</label><input type="password" id="p-pass" class="form-control" placeholder="••••••••"></div>
-      <div class="col-12"><label class="small text-secondary">Kelas</label><input type="text" id="p-kelas" class="form-control" placeholder="VII-A"></div>
+      <div class="col-12"><label class="small text-secondary">Kelas</label><input type="text" id="p-kelas" class="form-control" placeholder="VIII-A"></div>
     </div>
     <div class="modal-footer border-secondary"><button class="btn btn-success w-100 fw-bold" onclick="simpanPeserta()">Simpan Data Siswa</button></div>
   </div></div>
@@ -383,7 +372,6 @@
 <script>
   const API_URL = 'https://script.google.com/macros/s/AKfycbxY35_7Io1cGVVwzwsEn66htauRqvrouHTFm12H8d--MkNA5vNZcVgDuuR9c2fb6X_E2g/exec';
 
-  // Format Jam & Tanggal Indonesia yang Rapi
   function formatWaktuIndo(waktuStr) {
     if (!waktuStr) return '-';
     try {
