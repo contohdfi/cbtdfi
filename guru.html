@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Guru - CBT Darul Fawaid Ilmiyah</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: #0f172a; color: #f8fafc; }
+    .navbar-guru { background: #1e293b; border-bottom: 1px solid rgba(255,255,255,0.08); padding: 14px 24px; }
+    .card-custom { background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 22px; }
+    .nav-tabs-custom { border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .nav-tabs-custom .nav-link { color: #94a3b8; border: none; font-weight: 600; padding: 12px 20px; border-radius: 10px 10px 0 0; }
+    .nav-tabs-custom .nav-link.active { color: #10b981; background: #1e293b; border-bottom: 3px solid #10b981; }
+    .panel { display: none; }
+    .panel.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</head>
+<body>
+
+<nav class="navbar-guru d-flex justify-content-between align-items-center">
+  <div class="d-flex align-items-center gap-3">
+    <div class="bg-success text-white p-2 rounded-3"><i class="fas fa-chalkboard-teacher fa-lg"></i></div>
+    <div>
+      <h5 class="fw-bold mb-0 text-white">Panel Guru Pengampu</h5>
+      <small class="text-secondary" id="nama-guru">Ustadz Pengampu</small>
+    </div>
+  </div>
+  <div class="d-flex gap-2">
+    <button class="btn btn-outline-success btn-sm" onclick="loadDataGuru()"><i class="fas fa-sync-alt me-1"></i> Refresh</button>
+    <button class="btn btn-danger btn-sm" onclick="logout()"><i class="fas fa-sign-out-alt me-1"></i> Keluar</button>
+  </div>
+</nav>
+
+<div class="container-fluid py-4 px-4">
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card-custom d-flex align-items-center gap-3">
+        <div class="bg-primary text-white p-3 rounded-3"><i class="fas fa-question-circle fa-2x"></i></div>
+        <div><h3 class="fw-bold mb-0 text-white" id="st-soal">0</h3><small class="text-secondary">Soal di Bank Soal</small></div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card-custom d-flex align-items-center gap-3">
+        <div class="bg-info text-dark p-3 rounded-3"><i class="fas fa-file-signature fa-2x"></i></div>
+        <div><h3 class="fw-bold mb-0 text-white" id="st-ujian">0</h3><small class="text-secondary">Ujian Mapel Ini</small></div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card-custom d-flex align-items-center gap-3">
+        <div class="bg-warning text-dark p-3 rounded-3"><i class="fas fa-check-double fa-2x"></i></div>
+        <div><h3 class="fw-bold mb-0 text-white" id="st-koreksi">0</h3><small class="text-secondary">Menunggu Koreksi Uraian</small></div>
+      </div>
+    </div>
+  </div>
+
+  <ul class="nav nav-tabs-custom mb-4">
+    <li class="nav-item"><a class="nav-link nav-item-c active" href="#" onclick="gantiTab('bank-soal', this)"><i class="fas fa-database me-2"></i> Bank Soal</a></li>
+    <li class="nav-item"><a class="nav-link nav-item-c" href="#" onclick="gantiTab('koreksi', this)"><i class="fas fa-pen-fancy me-2"></i> Koreksi Esai / Uraian</a></li>
+  </ul>
+
+  <!-- Panel Bank Soal -->
+  <div id="panel-bank-soal" class="panel active">
+    <div class="d-flex justify-content-between mb-3">
+      <h5 class="fw-bold text-white mb-0">Daftar Bank Soal</h5>
+      <button class="btn btn-success btn-sm" onclick="bukaModalSoal()"><i class="fas fa-plus me-1"></i> Tambah Butir Soal</button>
+    </div>
+    <div class="card-custom p-0 overflow-hidden">
+      <table class="table table-dark mb-0">
+        <thead><tr><th>ID</th><th>Mapel</th><th>Tipe</th><th>Pertanyaan</th><th>Bobot</th></tr></thead>
+        <tbody id="tb-soal"><tr><td colspan="5" class="text-center text-secondary py-4">Memuat bank soal...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Panel Koreksi -->
+  <div id="panel-koreksi" class="panel">
+    <h5 class="fw-bold text-white mb-3">Jawaban Uraian Menunggu Penilaian</h5>
+    <div class="card-custom p-0 overflow-hidden">
+      <table class="table table-dark mb-0">
+        <thead><tr><th>Nama / UID Siswa</th><th>ID Soal</th><th>Jawaban Siswa</th><th>Beri Skor (0-100)</th><th>Aksi</th></tr></thead>
+        <tbody id="tb-koreksi"><tr><td colspan="5" class="text-center text-secondary py-4">Memuat jawaban siswa...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Soal -->
+<div class="modal fade" id="modalSoal" tabindex="-1">
+  <div class="modal-dialog modal-lg"><div class="modal-content" style="background:#1e293b; color:#fff;">
+    <div class="modal-header border-secondary"><h5 class="modal-title">Buat Soal Baru</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body row g-3">
+      <div class="col-md-4"><label class="small text-secondary">ID Soal</label><input type="text" id="ts-id" class="form-control"></div>
+      <div class="col-md-4"><label class="small text-secondary">Tipe Soal</label>
+        <select id="ts-tipe" class="form-select" onchange="toggleTipeSoal()">
+          <option value="PG">Pilihan Ganda (PG)</option>
+          <option value="Uraian">Uraian / Esai</option>
+          <option value="Isian">Isian Singkat</option>
+        </select>
+      </div>
+      <div class="col-md-4"><label class="small text-secondary">Bobot Nilai</label><input type="number" id="ts-bobot" class="form-control" value="20"></div>
+      <div class="col-md-12"><label class="small text-secondary">Isi Pertanyaan Soal</label><textarea id="ts-tanya" class="form-control" rows="3" placeholder="Tuliskan butir soal di sini..."></textarea></div>
+
+      <div id="area-pg" class="col-12">
+        <label class="small text-secondary mb-2">Pilihan Opsi Jawaban (Khusus Pilihan Ganda)</label>
+        <div class="row g-2">
+          <div class="col-md-6"><div class="input-group"><span class="input-group-text bg-dark text-white border-secondary">A</span><input type="text" id="ts-a" class="form-control" placeholder="Pilihan A"></div></div>
+          <div class="col-md-6"><div class="input-group"><span class="input-group-text bg-dark text-white border-secondary">B</span><input type="text" id="ts-b" class="form-control" placeholder="Pilihan B"></div></div>
+          <div class="col-md-6"><div class="input-group"><span class="input-group-text bg-dark text-white border-secondary">C</span><input type="text" id="ts-c" class="form-control" placeholder="Pilihan C"></div></div>
+          <div class="col-md-6"><div class="input-group"><span class="input-group-text bg-dark text-white border-secondary">D</span><input type="text" id="ts-d" class="form-control" placeholder="Pilihan D"></div></div>
+          <div class="col-md-12 mt-3"><label class="small text-secondary">Kunci Jawaban Benar</label><input type="text" id="ts-kunci" class="form-control text-warning fw-bold" placeholder="A / B / C / D"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer border-secondary">
+      <button type="button" class="btn btn-primary w-100" id="btn-simpan-soal" onclick="simpanSoalBaru()">Simpan ke Bank Soal</button>
+    </div>
+  </div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const API_URL = 'https://script.google.com/macros/s/AKfycbxY35_7Io1cGVVwzwsEn66htauRqvrouHTFm12H8d--MkNA5vNZcVgDuuR9c2fb6X_E2g/exec';
+  let modalSoalObj;
+
+  async function fetchAPI(action, payload = {}) {
+    payload.action = action;
+    payload.user_id = localStorage.getItem('cbt_user_id');
+    payload.mapel = localStorage.getItem('cbt_mapel');
+    return fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).then(r => r.json());
+  }
+
+  window.onload = () => {
+    if (localStorage.getItem('cbt_role') !== 'Guru') {
+      window.location.href = 'index.html';
+      return;
+    }
+    document.getElementById('nama-guru').innerText = localStorage.getItem('cbt_nama') + ' (' + (localStorage.getItem('cbt_mapel') || 'Semua Mapel') + ')';
+    modalSoalObj = new bootstrap.Modal(document.getElementById('modalSoal'));
+    loadDataGuru();
+  };
+
+  function gantiTab(id, el) {
+    document.querySelectorAll('.nav-item-c').forEach(a => a.classList.remove('active'));
+    if (el) el.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+  }
+
+  async function loadDataGuru() {
+    let res = await fetchAPI('getGuruData');
+    if (res.status === 'success') {
+      document.getElementById('st-soal').innerText = res.data.stats.s;
+      document.getElementById('st-ujian').innerText = res.data.stats.u;
+      document.getElementById('st-koreksi').innerText = res.data.stats.n;
+
+      document.getElementById('tb-soal').innerHTML = res.data.soal.map(s =>
+        `<tr><td><b>${s.id}</b></td><td><span class="badge bg-secondary">${s.mapel}</span></td><td><span class="badge bg-primary">${s.tipe}</span></td><td>${s.tanya}</td><td>${s.bobot}</td></tr>`
+      ).join('') || '<tr><td colspan="5" class="text-center text-secondary">Belum ada soal dibuat</td></tr>';
+
+      document.getElementById('tb-koreksi').innerHTML = res.data.nilai.map(n =>
+        `<tr id="baris-${n.row}">
+          <td><b class="text-info">${n.nama_siswa || n.u_id}</b><br><small class="text-secondary">${n.u_id}</small></td>
+          <td>${n.s_id}</td>
+          <td>${n.jwb}</td>
+          <td><input type="number" id="nilai-${n.row}" class="form-control form-control-sm text-center fw-bold text-success" placeholder="0-100"></td>
+          <td><button class="btn btn-sm btn-success" onclick="simpanKoreksi(${n.row})"><i class="fas fa-check"></i></button></td>
+        </tr>`
+      ).join('') || '<tr><td colspan="5" class="text-center text-secondary">Semua jawaban siswa telah dinilai</td></tr>';
+    }
+  }
+
+  function bukaModalSoal() {
+    document.getElementById('ts-id').value = 'S' + Math.floor(100 + Math.random() * 900);
+    modalSoalObj.show();
+  }
+
+  function toggleTipeSoal() {
+    let tipe = document.getElementById('ts-tipe').value;
+    document.getElementById('area-pg').style.display = (tipe === 'PG') ? 'block' : 'none';
+  }
+
+  async function simpanSoalBaru() {
+    let p = {
+      id_soal: document.getElementById('ts-id').value,
+      tipe: document.getElementById('ts-tipe').value,
+      bobot: document.getElementById('ts-bobot').value,
+      tanya: document.getElementById('ts-tanya').value,
+      a: document.getElementById('ts-a').value,
+      b: document.getElementById('ts-b').value,
+      c: document.getElementById('ts-c').value,
+      d: document.getElementById('ts-d').value,
+      kunci: document.getElementById('ts-kunci').value
+    };
+    let res = await fetchAPI('tambahSoal', p);
+    if (res.status === 'success') {
+      modalSoalObj.hide();
+      loadDataGuru();
+    }
+  }
+
+  async function simpanKoreksi(rowIndex) {
+    let nilai = document.getElementById('nilai-' + rowIndex).value;
+    if (!nilai) return alert('Masukkan nilai terlebih dahulu');
+    let res = await fetchAPI('simpanNilai', { row_index: rowIndex, nilai: nilai });
+    if (res.status === 'success') {
+      document.getElementById('baris-' + rowIndex).classList.add('table-success');
+      setTimeout(() => document.getElementById('baris-' + rowIndex).remove(), 1200);
+    }
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = 'index.html';
+  }
+</script>
+</body>
+</html>
